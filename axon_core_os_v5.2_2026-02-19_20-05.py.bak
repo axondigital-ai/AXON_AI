@@ -1,0 +1,114 @@
+import streamlit as st
+import os
+from google import genai
+from google.genai.types import Tool, GoogleSearch, GenerateContentConfig
+
+# 1. BAZA DE DATE: AXON PROTOCOLS (Integrată și Editabilă)
+if "protocols" not in st.session_state:
+    st.session_state.protocols = {
+        "Project_Manager": """**MISIUNE:** Responsabil final P&L și relația cu Investitorul.
+**IERARHIE:** Raportează Investitorului. Coordonează toți Pilonii.
+**DNA:** Management bugete mari, decizii strategice, risc comercial.
+**BUGET:** ~15.000 €/lună (PM + Asistent + Auto).""",
+
+        "Planning_Cost": """**MISIUNE:** "Singura Sursă de Adevăr" despre Timp și Bani.
+**DEPARTAMENTE:** Planning, Cost Control.
+**DNA:** Actualizare Master Schedule (Primavera), verificare facturi vs. progres fizic.
+**FLUXURI:** INPUT: Rapoarte site | OUTPUT: Cashflow Forecast, Earned Value.""",
+
+        "Commercial_FIDIC": """**MISIUNE:** Protejarea marjei de profit și gestionarea legală.
+**DNA:** Expert FIDIC, Claims, Corespondență, Variation Orders (VO).
+**BUGET:** Contract Manager (3.500 €), Quantity Surveyor (2.000 €).""",
+
+        "Engineering": """**MISIUNE:** Livrarea documentației tehnice Clash-free.
+**DNA:** Elaborare planșe IFC, Liste Materiale (BoQ).
+**REGULĂ:** Nu se cumpără nimic fără BoQ emis de Engineering!""",
+
+        "Procurement": """**MISIUNE:** Materialele corecte, la prețul corect, la timp (JIT).
+**DNA:** Achiziții, Logistică, Recepție Materiale (MRR).
+**BUGET:** Manager (3.000 €), Buyers, Logistician.""",
+
+        "HSE_Safety": """**MISIUNE:** Zero Accidente.
+**DNA:** Permise de Lucru (PTW), Instructaje, Statistici LTI.
+**AUTORITATE:** Drept de VETO (Stop Work) pentru siguranță!""",
+
+        "QA_QC": """**MISIUNE:** Conformitate cu Normativele.
+**DNA:** Plan Inspecții (ITP), Neconformități (NCR), Cartea Construcției.
+**BUGET:** Quality Manager (3.000 €), Inspector."""
+    }
+
+# 2. LOGICA DE RUTARE (APS -> PROTOCOL)
+def get_protocol_key(query):
+    q = query.lower()
+    if any(word in q for word in ["bani", "buget", "cost", "plata", "cashflow"]): return "Planning_Cost"
+    if any(word in q for word in ["cumpar", "achizitie", "material", "boq", "comanda"]): return "Procurement"
+    if any(word in q for word in ["accident", "pericol", "siguranta", "hse", "ssm"]): return "HSE_Safety"
+    if any(word in q for word in ["proiect", "planse", "inginerie", "ifc"]): return "Engineering"
+    if any(word in q for word in ["contract", "fidic", "claims", "legal"]): return "Commercial_FIDIC"
+    return "Project_Manager"
+
+# 3. CONFIGURARE PAGINĂ (LAYOUT-UL TĂU)
+st.set_page_config(page_title="AXON CORE OS", layout="wide", page_icon="🛡️")
+
+# SIDEBAR: IERARHIA ȘI SUBMENIURILE
+with st.sidebar:
+    st.title("🧬 AXON HOLDING")
+    st.success("🟢 APS Core: ACTIV")
+    st.divider()
+    
+    st.subheader("🏢 Ierarhie EPC")
+    if st.button("📁 Lead: Project Manager"): st.session_state.current_p = "Project_Manager"
+    
+    with st.expander("🧠 ASA Control & Suport"):
+        if st.button("📊 Planning & Cost"): st.session_state.current_p = "Planning_Cost"
+        if st.button("⚖️ Commercial & FIDIC"): st.session_state.current_p = "Commercial_FIDIC"
+        
+    with st.expander("🛠️ ASA Execution Core"):
+        if st.button("📐 Engineering"): st.session_state.current_p = "Engineering"
+        if st.button("🛒 Procurement"): st.session_state.current_p = "Procurement"
+        
+    with st.expander("🛡️ ASA Governance"):
+        if st.button("🦺 HSE / SSM"): st.session_state.current_p = "HSE_Safety"
+        if st.button("🔍 QA/QC Calitate"): st.session_state.current_p = "QA_QC"
+
+# 4. MAIN UI (COLOANELE TALE)
+col1, col2 = st.columns([1, 1])
+
+with col1:
+    st.title("🛡️ Consola AXON")
+    if p := st.chat_input("Introdu directiva pentru APS..."):
+        protocol_key = get_protocol_key(p)
+        st.chat_message("user").write(p)
+        
+        with st.spinner(f"APS aplică Protocolul {protocol_key}..."):
+            try:
+                client = genai.Client(vertexai=True, project=os.popen("gcloud config get-value project").read().strip(), location="us-central1")
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=f"Ești Expertul AXON pe {protocol_key}. PROTOCOLUL TĂU: {st.session_state.protocols[protocol_key]}. Răspunde la: {p}",
+                    config=GenerateContentConfig(temperature=0.0)
+                )
+                with st.chat_message("assistant"):
+                    st.write(f"**[🛡️ Protocol {protocol_key}]**")
+                    st.write(response.text)
+            except Exception as e: st.error(f"Eroare: {e}")
+
+with col2:
+    if "current_p" in st.session_state:
+        agent = st.session_state.current_p
+        st.subheader(f"📚 AXON PROTOCOL: {agent}")
+        
+        if st.session_state.get("editing", False):
+            new_val = st.text_area("Update Protocol (DNA Upgrade):", st.session_state.protocols[agent], height=450)
+            if st.button("💾 Salvează în DNA"):
+                st.session_state.protocols[agent] = new_val
+                st.session_state.editing = False
+                st.rerun()
+        else:
+            with st.container(border=True):
+                st.markdown(st.session_state.protocols[agent])
+                if st.button("📝 Upgrade Protocol"):
+                    st.session_state.editing = True
+                    st.rerun()
+    else:
+        st.info("Selectează un Protocol din ierarhia laterală pentru a-l vizualiza sau edita.")

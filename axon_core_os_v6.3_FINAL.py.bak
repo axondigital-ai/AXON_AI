@@ -1,0 +1,95 @@
+import streamlit as st
+import os
+import datetime
+from google import genai
+from google.genai.types import Tool, GoogleSearch, GenerateContentConfig
+
+# 1. BAZA DE DATE: AXON PROTOCOLS (Păstrată integral din v6.2)
+if "protocols" not in st.session_state:
+    st.session_state.protocols = {
+        "Project_Manager": "### 🛡️ PROTOCOL: PM (DIRECTOR GENERAL EPC)\n- **MISIUNE**: Responsabil final P&L și relația cu Investitorul.\n- **MONITORIZARE**: Dashboard via Primavera (Timp) și eDevize (Bani).\n- **BUGET**: ~15.000 €/lună.",
+        "Planning": "### 📊 PROTOCOL: PLANNING\n- **MISIUNE**: 'Singura Sursă de Adevăr' despre Timp. API: Primavera P6.",
+        "Cost_Control": "### 💰 PROTOCOL: COST CONTROL\n- **MISIUNE**: Garanția profitabilității. API: eDevize.",
+        "Commercial": "### ⚖️ PROTOCOL: COMMERCIAL & CONTRACTS\n- **MISIUNE**: Protejarea marjei și management legal (FIDIC).",
+        "Risk_Management": "### ⚠️ PROTOCOL: RISK MANAGEMENT\n- **MISIUNE**: Minimizarea surprizelor. Buget: 1.500 €.",
+        "Engineering": "### 📐 PROTOCOL: ENGINEERING\n- **MISIUNE**: Documentație IFC. Regula: BoQ-ul este obligatoriu!",
+        "Procurement": "### 🛒 PROTOCOL: PROCUREMENT\n- **MISIUNE**: Achiziții JIT. Nu cumpără fără BoQ de la Engineering.",
+        "Construction": "### 🏗️ PROTOCOL: CONSTRUCTION\n- **MISIUNE**: Execuție fizică. API: Fieldwire & Sitemark (drone).",
+        "Commissioning": "### 🔌 PROTOCOL: COMMISSIONING (PiF)\n- **MISIUNE**: Validarea performanței (PR).",
+        "HSE": "### 🦺 PROTOCOL: HSE (SAFETY)\n- **MISIUNE**: Zero Accidente. Drept de VETO (Stop Work).",
+        "QA_QC": "### 🔍 PROTOCOL: QA/QC (CALITATE)\n- **MISIUNE**: Conformitate normative via Fieldwire & Sitemark."
+    }
+
+# 2. CONFIGURARE PAGINĂ (Păstrarea layout-ului din imaginea b89a85.png)
+st.set_page_config(page_title="AXON CORE OS", layout="wide", page_icon="🛡️")
+
+# SIDEBAR: MENIURILE EXACTE DIN IMAGINEA B89A85.PNG
+with st.sidebar:
+    st.title("🧬 AXON HOLDING")
+    st.success("🟢 APS Core: ACTIV")
+    st.divider()
+    with st.expander("🔗 TELEMETRIE API"):
+        st.caption("Primavera P6: 🟢 | eDevize: 🟢")
+        st.caption("Fieldwire: 🟢 | Sitemark: 🟢")
+    st.divider()
+    
+    st.subheader("🏢 Ierarhie EPC")
+    if st.button("📁 Lead: Project Manager"): st.session_state.current_p = "Project_Manager"
+    
+    with st.expander("🧠 ASA Control & Suport"):
+        if st.button("📊 Planning"): st.session_state.current_p = "Planning"
+        if st.button("💰 Cost Control"): st.session_state.current_p = "Cost_Control"
+        if st.button("⚖️ Commercial & FIDIC"): st.session_state.current_p = "Commercial"
+        if st.button("⚠️ Risk Management"): st.session_state.current_p = "Risk_Management"
+        
+    with st.expander("🛠️ ASA Execution Core"):
+        if st.button("📐 Engineering"): st.session_state.current_p = "Engineering"
+        if st.button("🛒 Procurement"): st.session_state.current_p = "Procurement"
+        if st.button("🏗️ Construction"): st.session_state.current_p = "Construction"
+        if st.button("🔌 Commissioning (PiF)"): st.session_state.current_p = "Commissioning"
+        
+    with st.expander("🛡️ ASA Governance"):
+        if st.button("🦺 HSE / SSM"): st.session_state.current_p = "HSE"
+        if st.button("🔍 QA/QC Calitate"): st.session_state.current_p = "QA_QC"
+
+# 3. LOGICA DE DELEGARE ȘI CONTEXT TIMP
+today = datetime.datetime.now().strftime("%A, %d %B %Y")
+
+# MAIN UI (Două coloane conform imaginii b89a85.png)
+col1, col2 = st.columns([1, 1])
+with col1:
+    st.title("🛡️ Consola AXON")
+    if p := st.chat_input("Introdu directiva..."):
+        st.chat_message("user").write(p)
+        with st.spinner("Accesare Nexus Digital..."):
+            try:
+                client = genai.Client(vertexai=True, project=os.popen("gcloud config get-value project").read().strip(), location="us-central1")
+                # ACTIVĂM GOOGLE SEARCH ȘI DATA CURENTĂ
+                search_tool = Tool(google_search=GoogleSearch())
+                config = GenerateContentConfig(tools=[search_tool], temperature=0.0)
+                
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=f"Data de azi este {today}. Ești Expertul AXON sub coordonarea APS. Pe lângă protocoalele tale: {st.session_state.protocols}, folosește instrumentele de căutare pentru date actuale. Răspunde la: {p}",
+                    config=config
+                )
+                with st.chat_message("assistant"): st.write(response.text)
+            except Exception as e: st.error(f"Eroare: {e}")
+
+with col2:
+    if "current_p" in st.session_state:
+        agent = st.session_state.current_p
+        st.subheader(f"📚 AXON PROTOCOL: {agent}")
+        if st.session_state.get("editing", False):
+            new_val = st.text_area("Upgrade DNA Protocol:", st.session_state.protocols[agent], height=500)
+            if st.button("💾 Salvează"):
+                st.session_state.protocols[agent] = new_val
+                st.session_state.editing = False
+                st.rerun()
+        else:
+            with st.container(border=True):
+                st.markdown(st.session_state.protocols[agent])
+                if st.button("📝 Upgrade Manual"):
+                    st.session_state.editing = True
+                    st.rerun()
+    else: st.info("Selectează un Protocol din ierarhie.")
