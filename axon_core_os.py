@@ -212,5 +212,32 @@ else:
             
             if agent == "Procurement": # GESTIUNE STOC
                 with tabs[2]:
-                    docs_inv = [d.to_dict() for d in clients["db"].collection("axon_inventory").stream()]
-                    st.dataframe(pd.DataFrame(docs_inv), use_container_width=True)
+                    try:
+                        import pandas as pd
+                        from google.cloud import firestore
+                        db_v = firestore.Client()
+                        data = [d.to_dict() for d in db_v.collection('axon_inventory').stream()]
+                        if data:
+                            df = pd.DataFrame(data)
+                            cols = ['Cantitate_Planificata', 'Cantitate_Receptionata', 'Cantitate_Custodie', 'Cantitate_Validata']
+                            for c in cols:
+                                if c in df.columns: df[c] = pd.to_numeric(df[c], errors='coerce').fillna(0)
+                            df['Mat_Baza'] = df['Material'].apply(lambda x: str(x).split(' (')[0].strip())
+                            df['Categorie'] = df['Categorie'].str.strip()
+                            st.subheader('📊 CONTROL OPERAȚIONAL EPC (STATUS PROIECT)')
+                            summary = df.groupby(['Categorie', 'Mat_Baza']).agg({'Cantitate_Planificata':'sum','Cantitate_Receptionata':'sum','Cantitate_Custodie':'sum','Cantitate_Validata':'sum'}).reset_index()
+                            for cat in ['Major Assets', 'Mechanical', 'DC Electrical', 'AC Electrical', 'Earthing', 'Consumables']:
+                                c_df = summary[summary['Categorie'] == cat].copy()
+                                with st.expander(f'📁 {cat.upper()} ({len(c_df)})'):
+                                    if not c_df.empty:
+                                        c_df['În Depozit'] = c_df['Cantitate_Receptionata'] - (c_df['Cantitate_Custodie'] + c_df['Cantitate_Validata'])
+                                        c_df['Progres Real'] = (c_df['Cantitate_Validata'] / c_df['Cantitate_Planificata'] * 100).fillna(0)
+                                        c_v = c_df.rename(columns={'Mat_Baza':'Articol','Cantitate_Planificata':'Planificat','Cantitate_Receptionata':'Total Intrat','Cantitate_Custodie':'În Custodie','Cantitate_Validata':'Realizat (PV)'})
+                                        c_v['Progres Real'] = c_v['Progres Real'].apply(lambda x: f'{x:.1f}%')
+                                        st.dataframe(c_v[['Articol', 'Planificat', 'Total Intrat', 'În Depozit', 'În Custodie', 'Realizat (PV)', 'Progres Real']], use_container_width=True, hide_index=True)
+                            st.markdown('---')
+                            st.subheader('📈 SITUAȚIE CONTRACTORI (DETALIU CUSTODIE)')
+                            cust_df = df[df['Material'].str.contains(r'\(', na=False) | (df['Cantitate_Custodie'] > 0)].copy()
+                            if not cust_df.empty:
+                                st.dataframe(cust_df.rename(columns={'Cantitate_Validata': 'Validat (PV)'})[['Material', 'Contractor_Custodie', 'Cantitate_Custodie', 'Validat (PV)', 'Status']], use_container_width=True, hide_index=True)
+                    except Exception as e: st.error(f'Eroare Gestiune: {e}')
