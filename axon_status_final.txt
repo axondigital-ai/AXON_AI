@@ -1,0 +1,330 @@
+=== AXON PROJECT SNAPSHOT - ROGVAIV ===
+Data export: Tue Feb 24 20:57:01 UTC 2026
+
+1. STRUCTURA BAZEI DE DATE (Schema):
+--
+-- PostgreSQL database dump
+--
+
+\restrict Gxa2yvFsSDW2eoREsYUZ3iuyMA851xDTeescM0ccnVjl4sIkL1wqSPRMvoBERds
+
+-- Dumped from database version 15.16 (Debian 15.16-0+deb12u1)
+-- Dumped by pg_dump version 15.16 (Debian 15.16-0+deb12u1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry and geography spatial types and functions';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: axon_panels; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.axon_panels (
+    id integer NOT NULL,
+    serial_number character varying(100),
+    tracker_id integer,
+    string_id integer,
+    geom_point public.geometry(Point,4326),
+    scan_timestamp timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.axon_panels OWNER TO postgres;
+
+--
+-- Name: axon_panels_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.axon_panels_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.axon_panels_id_seq OWNER TO postgres;
+
+--
+-- Name: axon_panels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.axon_panels_id_seq OWNED BY public.axon_panels.id;
+
+
+--
+-- Name: axon_strings; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.axon_strings (
+    id integer NOT NULL,
+    string_label character varying(50),
+    sts_id integer,
+    inverter_id character varying(20),
+    geom_planned public.geometry(LineString,4326),
+    geom_as_built public.geometry(Point,4326),
+    status character varying(20) DEFAULT 'PENDING'::character varying,
+    last_update timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.axon_strings OWNER TO postgres;
+
+--
+-- Name: axon_strings_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.axon_strings_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.axon_strings_id_seq OWNER TO postgres;
+
+--
+-- Name: axon_strings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.axon_strings_id_seq OWNED BY public.axon_strings.id;
+
+
+--
+-- Name: axon_trackers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.axon_trackers (
+    id integer NOT NULL,
+    tracker_label character varying(50),
+    sts_id integer,
+    geom_location public.geometry(Polygon,4326),
+    status character varying(20) DEFAULT 'NOT_STARTED'::character varying
+);
+
+
+ALTER TABLE public.axon_trackers OWNER TO postgres;
+
+--
+-- Name: axon_trackers_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.axon_trackers_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.axon_trackers_id_seq OWNER TO postgres;
+
+--
+-- Name: axon_trackers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.axon_trackers_id_seq OWNED BY public.axon_trackers.id;
+
+
+--
+-- Name: axon_panels id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_panels ALTER COLUMN id SET DEFAULT nextval('public.axon_panels_id_seq'::regclass);
+
+
+--
+-- Name: axon_strings id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_strings ALTER COLUMN id SET DEFAULT nextval('public.axon_strings_id_seq'::regclass);
+
+
+--
+-- Name: axon_trackers id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_trackers ALTER COLUMN id SET DEFAULT nextval('public.axon_trackers_id_seq'::regclass);
+
+
+--
+-- Name: axon_panels axon_panels_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_panels
+    ADD CONSTRAINT axon_panels_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: axon_panels axon_panels_serial_number_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_panels
+    ADD CONSTRAINT axon_panels_serial_number_key UNIQUE (serial_number);
+
+
+--
+-- Name: axon_strings axon_strings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_strings
+    ADD CONSTRAINT axon_strings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: axon_strings axon_strings_string_label_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_strings
+    ADD CONSTRAINT axon_strings_string_label_key UNIQUE (string_label);
+
+
+--
+-- Name: axon_trackers axon_trackers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_trackers
+    ADD CONSTRAINT axon_trackers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: axon_trackers axon_trackers_tracker_label_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_trackers
+    ADD CONSTRAINT axon_trackers_tracker_label_key UNIQUE (tracker_label);
+
+
+--
+-- Name: axon_panels axon_panels_string_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_panels
+    ADD CONSTRAINT axon_panels_string_id_fkey FOREIGN KEY (string_id) REFERENCES public.axon_strings(id);
+
+
+--
+-- Name: axon_panels axon_panels_tracker_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.axon_panels
+    ADD CONSTRAINT axon_panels_tracker_id_fkey FOREIGN KEY (tracker_id) REFERENCES public.axon_trackers(id);
+
+
+--
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: pg_database_owner
+--
+
+GRANT USAGE ON SCHEMA public TO admin_axon;
+
+
+--
+-- Name: TABLE axon_panels; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.axon_panels TO admin_axon;
+
+
+--
+-- Name: SEQUENCE axon_panels_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.axon_panels_id_seq TO admin_axon;
+
+
+--
+-- Name: TABLE axon_strings; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.axon_strings TO admin_axon;
+
+
+--
+-- Name: SEQUENCE axon_strings_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.axon_strings_id_seq TO admin_axon;
+
+
+--
+-- Name: TABLE axon_trackers; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.axon_trackers TO admin_axon;
+
+
+--
+-- Name: SEQUENCE axon_trackers_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON SEQUENCE public.axon_trackers_id_seq TO admin_axon;
+
+
+--
+-- Name: TABLE geography_columns; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.geography_columns TO admin_axon;
+
+
+--
+-- Name: TABLE geometry_columns; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.geometry_columns TO admin_axon;
+
+
+--
+-- Name: TABLE spatial_ref_sys; Type: ACL; Schema: public; Owner: postgres
+--
+
+GRANT ALL ON TABLE public.spatial_ref_sys TO admin_axon;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict Gxa2yvFsSDW2eoREsYUZ3iuyMA851xDTeescM0ccnVjl4sIkL1wqSPRMvoBERds
+
+
+2. SUMAR COMPONENTE INSTALATE:
+
+3. STATUS TRACKERE (Metabase Sync):
+  status  | count 
+----------+-------
+ in_lucru |    12
+ instalat |    39
+(2 rows)
+
+
+4. ULTIMELE 5 INTRARI MENTENANTA (Varianta B):

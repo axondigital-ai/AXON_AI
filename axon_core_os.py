@@ -8,19 +8,151 @@ from google.cloud import firestore, storage, discoveryengine_v1 as discoveryengi
 PROJECT_ID = "axon-core-os"
 BUCKET_NAME = "axon-archive-axon-core-os"
 DATA_STORE_ID = "axon-knowledge-base_1771593704304"
+
+
+
+def display_construction_management():
+    st.subheader("📊 Gestiune Resurse - SISTEM INTEGRAT AXON")
+    import pandas as pd
+    
+    # 1. MAJOR ASSETS (Componente Principale)
+    with st.expander("🏗️ MAJOR ASSETS (Echipamente Principale)", expanded=True):
+        data_major = {
+            "Cod": ["MOD-PV", "INV-100", "TRK-SYS", "TRF-MVA"],
+            "Componentă": ["Module Fotovoltaice", "Invertoare Centrale", "Sisteme Tracker", "Transformatoare"],
+            "UM": ["BUC", "BUC", "SET", "BUC"],
+            "Stoc": [480, 4, 50, 2],
+            "Status": ["Sincronizat", "Verificare", "OK", "În Tranzit"]
+        }
+        st.dataframe(pd.DataFrame(data_major), use_container_width=True)
+
+    # 2. BOS & ELECTRICAL (Componente Electrice și Conectică)
+    with st.expander("⚡ BOS & ELECTRICAL (Cabluri și Conectori)", expanded=False):
+        data_elec = {
+            "Cod": ["CAB-HV", "CAB-DC", "STR-BOX", "CON-MC4"],
+            "Componentă": ["Cablu Medie Tensiune", "Cablu Solar DC", "String Boxes", "Conectori MC4"],
+            "UM": ["M", "M", "BUC", "SET"],
+            "Stoc": [2500, 15000, 24, 1000],
+            "Status": ["Stoc OK", "Necesar Suplimentar", "Sincronizat", "Stoc OK"]
+        }
+        st.dataframe(pd.DataFrame(data_elec), use_container_width=True)
+
+    # 3. MECHANICAL & STRUCTURE (Structuri și Montaj)
+    with st.expander("🛠️ MECHANICAL & STRUCTURE (Structură Metalică)", expanded=False):
+        data_mech = {
+            "Cod": ["PILE-01", "RAIL-A", "BOLT-M12", "BRK-V"],
+            "Componentă": ["Piloți Metalici", "Șine Susținere", "Set Șuruburi M12", "Bracheți Fixare"],
+            "UM": ["BUC", "ML", "CUTIE", "BUC"],
+            "Stoc": [600, 1200, 45, 800],
+            "Status": ["OK", "OK", "Stoc Scăzut", "Sincronizat"]
+        }
+        st.dataframe(pd.DataFrame(data_mech), use_container_width=True)
+
+    # 4. CUSTODIE (Subcontractori și Echipamente)
+    st.markdown("---")
+    st.subheader("📋 Echipamente în Custodie (Control Operativ)")
+    data_custodie = {
+        "Subcontractor": ["EL-Instal SRL", "CIVIL-Build", "EL-Instal SRL", "Solar-Tech"],
+        "Articol în Custodie": ["Scule electrice grup", "Excavator CAT 320", "Generator 50kVA", "Drone Monitorizare"],
+        "Cant.": [12, 1, 2, 3],
+        "Predat la": ["2026-01-10", "2026-02-05", "2026-02-15", "2026-02-20"],
+        "Status Retur": ["În termen", "În termen", "Depășit", "Activ"]
+    }
+    st.table(pd.DataFrame(data_custodie))
+    
+    st.success("✅ Toate componentele și gestiunea custodiei sunt actualizate la zi.")
+
+
+
+def display_construction_management():
+    try:
+        import pandas as pd
+        from google.cloud import firestore
+        db_v = firestore.Client()
+        docs = db_v.collection('axon_inventory').stream()
+        data = [d.to_dict() for d in docs]
+        if data:
+            df = pd.DataFrame(data)
+            # Conversie numerică obligatorie conform codului tău original
+            for c in ['Cantitate_Planificata', 'Cantitate_Receptionata', 'Cantitate_Custodie', 'Cantitate_Instalata', 'Cantitate_Validata']:
+                if c in df.columns: df[c] = pd.to_numeric(df[c], errors='coerce').fillna(0)
+            
+            st.subheader('📊 CONTROL OPERAȚIONAL EPC (DATE OFICIALE)')
+            df['Mat_Baza'] = df['Material'].apply(lambda x: str(x).split(' (')[0])
+            sum_df = df.groupby(['Categorie', 'Mat_Baza']).agg({
+                'Cantitate_Planificata':'sum',
+                'Cantitate_Receptionata':'sum',
+                'Cantitate_Custodie':'sum',
+                'Cantitate_Validata':'sum'
+            }).reset_index()
+            
+            # Cele 6 categorii sfinte din codul tău
+            for cat in ['Major Assets', 'Mechanical', 'DC Electrical', 'AC Electrical', 'Earthing', 'Consumables']:
+                c_df = sum_df[sum_df['Categorie'].str.strip() == cat]
+                with st.expander(f'📁 {cat.upper()} ({len(c_df)} repere)'):
+                    if not c_df.empty:
+                        v = c_df.rename(columns={'Cantitate_Custodie':'In Custodie','Cantitate_Validata':'Realizat (PV)'})
+                        st.dataframe(v[['Mat_Baza', 'Cantitate_Planificata', 'Cantitate_Receptionata', 'In Custodie', 'Realizat (PV)']], use_container_width=True, hide_index=True)
+            
+            st.markdown('---')
+            st.subheader('📈 DETALII CONTRACTORI (SITUAȚIE TEREN)')
+            d_df = df[(df['Cantitate_Custodie']>0)|(df['Cantitate_Instalata']>0)|(df['Cantitate_Validata']>0)]
+            if not d_df.empty:
+                dv = d_df.rename(columns={'Cantitate_Instalata':'Raportat Constructor','Cantitate_Validata':'Validat PM'})
+                st.dataframe(dv[['Material','Contractor_Custodie','Cantitate_Custodie','Raportat Constructor','Validat PM','Status']], use_container_width=True, hide_index=True)
+        else:
+            st.info("Baza de date axon_inventory este goală.")
+    except Exception as e:
+        st.error(f"Eroare Gestiune: {e}")
+
+def display_rogvaiv_gis():
+    st.markdown("### 🗺️ ROGVAIV GIS Tracker Status")
+    try:
+        import psycopg2
+        # Ne conectăm direct pentru a evita erorile de cache
+        conn = psycopg2.connect(
+            host="127.0.0.1", 
+            database="axon_rogvaiv", 
+            user="admin_axon", 
+            password="Axon2026X", 
+            port="5432",
+            connect_timeout=3
+        )
+        cur = conn.cursor()
+        cur.execute("SELECT tracker_label, status FROM axon_trackers ORDER BY tracker_label ASC")
+        rows = cur.fetchall()
+        
+        if not rows:
+            st.info("ℹ️ Baza de date este accesibilă, dar tabelul 'axon_trackers' nu are date.")
+        else:
+            cols = st.columns(5)
+            for i, (label, status) in enumerate(rows):
+                with cols[i % 5]:
+                    color = "#28a745" if status == "instalat" else "#fd7e14" if status == "in_lucru" else "#6c757d"
+                    st.markdown(f'<div style="border-left:4px solid {color}; padding:5px; background:rgba(255,255,255,0.05); margin-bottom:10px;"><b style="font-size:12px;">{label}</b><br><small>{status.upper()}</small></div>', unsafe_allow_html=True)
+        cur.close()
+        conn.close()
+    except Exception as e:
+        st.error(f"❌ Problemă la încărcarea hărții GIS: {e}")
+
 LOCATION = "global"
 
 @st.cache_resource
+@st.cache_resource
 def get_clients():
+    import psycopg2
     try:
-        return {
-            "db": firestore.Client(project=PROJECT_ID),
-            "storage": storage.Client(project=PROJECT_ID),
-            "ai": genai.Client(vertexai=True, project=PROJECT_ID, location="us-central1"),
-            "search": discoveryengine.SearchServiceClient()
+        cl = {
+            'db': firestore.Client(project=PROJECT_ID),
+            'storage': storage.Client(project=PROJECT_ID),
+            'ai': genai.Client(vertexai=True, project=PROJECT_ID, location='us-central1'),
+            'search': discoveryengine.SearchServiceClient()
         }
+        try:
+            cl['pg_conn'] = psycopg2.connect(host='127.0.0.1', database='axon_rogvaiv', user='admin_axon', password='Axon2026X', connect_timeout=3)
+        except: cl['pg_conn'] = None
+        return cl
     except: return None
-
 clients = get_clients()
 
 # --- HEALTH MONITOR (Ecran Start) ---
@@ -176,68 +308,25 @@ else:
         with col2:
             st.subheader(f"📚 HUB: {agent}")
             t_labels = ["🔒 Protocol", "📂 Arhivă"]
-            if agent == "Procurement": t_labels.append("📊 Gestiune")
-            tabs = st.tabs(t_labels)
-            
-            with tabs[0]: # PROTOCOL DNA
-                with st.expander("📝 Editează Protocol DNA", expanded=False):
-                    dna_text = get_protocol(agent)
-                    new_dna = st.text_area("DNA:", dna_text, height=200)
-                    if st.button("💾 Salvează DNA"): save_protocol(agent, new_dna); st.rerun()
-            
-            with tabs[1]: # ARHIVĂ (UPLOAD + PREVIEW + ZOOM + ȘTERGERE)
-                with st.expander("📤 Upload Document", expanded=False):
-                    cats = DEPT_CATEGORIES.get(agent, ["General"])
-                    sel_c = st.selectbox("Dosar:", cats)
-                    up = st.file_uploader("Selectează fișier")
-                    if st.button("🚀 Arhivează"):
-                        if up:
-                            p_path = f"{agent}/{sel_c}_{up.name}"
-                            clients["storage"].bucket(BUCKET_NAME).blob(p_path).upload_from_string(up.read())
-                            st.rerun()
-                st.divider()
-                all_b = list_files(agent)
-                for c in cats:
-                    with st.expander(f"📁 {c}", expanded=False):
-                        for f in [x for x in all_b if f"{c}_" in x.name]:
-                            c1, c2, c3 = st.columns([0.2, 0.7, 0.1])
-                            if f.name.lower().endswith(('.png', '.jpg', '.jpeg')):
-                                img_b = f.download_as_bytes()
-                                c1.image(img_b, width=60)
-                                if c1.button("🔍", key=f"z_{f.name}"): st.image(img_b, use_container_width=True)
-                            else: c1.write("📄")
-                            c2.caption(f.name.split('_', 1)[-1])
-                            if c3.button("🗑️", key=f"d_{f.name}"):
-                                clients["storage"].bucket(BUCKET_NAME).blob(f.name).delete(); st.rerun()
-            
-            if agent == "Procurement": # GESTIUNE STOC
+            if agent in ["Procurement", "Construction"]: t_labels.append("📊 Gestiune")
+            if agent == "Construction":
+                t_labels = ['📑 Protocol', '📂 Arhivă & Jurnale', '📊 Gestiune', '🗺️ GIS ROGVAIV']
+                tabs = st.tabs(t_labels)
+                with tabs[0]:
+                    st.subheader('📑 Protocol Operațional DNA')
+                    st.write('Procedura de lucru standard pentru execuție.')
+                with tabs[1]:
+                    st.subheader('📂 Documentație și Jurnale')
+                    st.file_uploader('📤 Încarcă document', key='const_up_final')
+                    c1, c2 = st.columns(2)
+                    with c1: st.button('📄 Jurnale Șantier', use_container_width=True)
+                    with c2: st.button('📋 Method Statements', use_container_width=True)
                 with tabs[2]:
                     try:
-                        import pandas as pd
-                        from google.cloud import firestore
-                        db_v = firestore.Client()
-                        data = [d.to_dict() for d in db_v.collection('axon_inventory').stream()]
-                        if data:
-                            df = pd.DataFrame(data)
-                            cols = ['Cantitate_Planificata', 'Cantitate_Receptionata', 'Cantitate_Custodie', 'Cantitate_Validata']
-                            for c in cols:
-                                if c in df.columns: df[c] = pd.to_numeric(df[c], errors='coerce').fillna(0)
-                            df['Mat_Baza'] = df['Material'].apply(lambda x: str(x).split(' (')[0].strip())
-                            df['Categorie'] = df['Categorie'].str.strip()
-                            st.subheader('📊 CONTROL OPERAȚIONAL EPC (STATUS PROIECT)')
-                            summary = df.groupby(['Categorie', 'Mat_Baza']).agg({'Cantitate_Planificata':'sum','Cantitate_Receptionata':'sum','Cantitate_Custodie':'sum','Cantitate_Validata':'sum'}).reset_index()
-                            for cat in ['Major Assets', 'Mechanical', 'DC Electrical', 'AC Electrical', 'Earthing', 'Consumables']:
-                                c_df = summary[summary['Categorie'] == cat].copy()
-                                with st.expander(f'📁 {cat.upper()} ({len(c_df)})'):
-                                    if not c_df.empty:
-                                        c_df['În Depozit'] = c_df['Cantitate_Receptionata'] - (c_df['Cantitate_Custodie'] + c_df['Cantitate_Validata'])
-                                        c_df['Progres Real'] = (c_df['Cantitate_Validata'] / c_df['Cantitate_Planificata'] * 100).fillna(0)
-                                        c_v = c_df.rename(columns={'Mat_Baza':'Articol','Cantitate_Planificata':'Planificat','Cantitate_Receptionata':'Total Intrat','Cantitate_Custodie':'În Custodie','Cantitate_Validata':'Realizat (PV)'})
-                                        c_v['Progres Real'] = c_v['Progres Real'].apply(lambda x: f'{x:.1f}%')
-                                        st.dataframe(c_v[['Articol', 'Planificat', 'Total Intrat', 'În Depozit', 'În Custodie', 'Realizat (PV)', 'Progres Real']], use_container_width=True, hide_index=True)
-                            st.markdown('---')
-                            st.subheader('📈 SITUAȚIE CONTRACTORI (DETALIU CUSTODIE)')
-                            cust_df = df[df['Material'].str.contains(r'\(', na=False) | (df['Cantitate_Custodie'] > 0)].copy()
-                            if not cust_df.empty:
-                                st.dataframe(cust_df.rename(columns={'Cantitate_Validata': 'Validat (PV)'})[['Material', 'Contractor_Custodie', 'Cantitate_Custodie', 'Validat (PV)', 'Status']], use_container_width=True, hide_index=True)
-                    except Exception as e: st.error(f'Eroare Gestiune: {e}')
+                        import pyarrow
+                        display_construction_management()
+                    except Exception as e:
+                        st.error(f"❌ Eroare Gestiune: {e}")
+                        st.code("Încearcă: pip install pyarrow==15.0.0")
+                with tabs[3]:
+                    display_rogvaiv_gis()

@@ -1,0 +1,48 @@
+ ====================================================
+
+       AXON CORE - MODULE CLOSURE CERTIFICATE       
+
+          PROIECT FOTOVOLTAIC ROGVAIV               
+
+ ====================================================
+
+ DATA RAPORT: 2026-02-25 11:05:01.219755+00
+
+ ID MODUL: STS-01 (1.2 MWp)
+
+ ----------------------------------------------------
+
+ 1. STATUS FINANCIAR (Cost Control Agent):
+
+    - Valoare totala decontabila: 29525.0000 RON
+
+ ----------------------------------------------------
+
+ 2. RECONCILIERE MATERIALE (Procurement Agent):
+
+    - Rola cablu: ROLA-DC-6MM-STS01-042
+
+    - Cantitate instalata: 250.00 ml
+
+    - Status Stoc: RECONCILIAT (750m ramasi)
+
+ ----------------------------------------------------
+
+ 3. VALIDARE TEHNICA (QA/QC Agent):
+
+    - Precizie medie RTK: 0.020 m
+
+    - Status Calitate: CONFORM (Sub pragul de 0.05m)
+
+ ----------------------------------------------------
+
+ 4. PUNCTE DE PREDARE (Contract Management):
+
+    - Handover Fibră Optică (FO-JB): FINALIZAT SI LOGAT
+
+ ----------------------------------------------------
+
+       SEMNATURA DIGITALA: [AXON_PM_MASTER_AI]       
+
+ ====================================================
+

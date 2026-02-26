@@ -1,0 +1,638 @@
+--- 📊 ANALIZA PROIECT AXON CORE (Thu Feb 26 13:30:40 UTC 2026) ---
+📄 Fișier: ./axon_core_os.py
+📏 Dimensiune: 243 linii
+🔍 Rol Probabil: Interfață Utilizator (UI)
+📝 Primele rânduri:
+   import streamlit as st
+   import pandas as pd
+   from google import genai
+-----------------------------------------------
+📄 Fișier: ./report_panel_installation.py
+📏 Dimensiune: 34 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./create_nomenclator_v4.py
+📏 Dimensiune: 57 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./rebuild_ui_v38.py
+📏 Dimensiune: 67 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./force_fix_v15.py
+📏 Dimensiune: 50 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./alma_reports_progress.py
+📏 Dimensiune: 25 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./surgical_fix_ui.py
+📏 Dimensiune: 35 linii
+🔍 Rol Probabil: Utilitar / Configurare
+📝 Primele rânduri:
+   import os
+   import shutil
+   
+-----------------------------------------------
+📄 Fișier: ./reorganize_hierarchy.py
+📏 Dimensiune: 35 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./master_sync_fix.py
+📏 Dimensiune: 72 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   import google.cloud.firestore as firestore
+   
+-----------------------------------------------
+📄 Fișier: ./clean_ui_v29.py
+📏 Dimensiune: 72 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./force_pvcase_sync.py
+📏 Dimensiune: 54 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./surgical_clean_v35.py
+📏 Dimensiune: 35 linii
+🔍 Rol Probabil: Utilitar / Configurare
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./smart_sync_v4.py
+📏 Dimensiune: 39 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   import unicodedata
+-----------------------------------------------
+📄 Fișier: ./finisare_nomenclator.py
+📏 Dimensiune: 26 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./rebuild_nomenclator_v6.py
+📏 Dimensiune: 56 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./sync_to_postgres.py
+📏 Dimensiune: 54 linii
+🔍 Rol Probabil: Conexiune Bază de Date (SQL)
+📝 Primele rânduri:
+   import psycopg2
+   import math
+   
+-----------------------------------------------
+📄 Fișier: ./inject_full_bom_epc.py
+📏 Dimensiune: 51 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./sanitizer_inventory.py
+📏 Dimensiune: 25 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./inject_data.py
+📏 Dimensiune: 47 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./audit_firestore.py
+📏 Dimensiune: 33 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./bridge_logic_pm.py
+📏 Dimensiune: 31 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./generate_elaborate_docs.py
+📏 Dimensiune: 25 linii
+🔍 Rol Probabil: Utilitar / Configurare
+📝 Primele rânduri:
+   from docx import Document
+   from docx.shared import Pt
+   from docx.enum.text import WD_ALIGN_PARAGRAPH
+-----------------------------------------------
+📄 Fișier: ./create_nomenclator_v2.py
+📏 Dimensiune: 35 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./axon_handover.py
+📏 Dimensiune: 23 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import sys
+   import google.cloud.firestore as firestore
+   db = firestore.Client()
+-----------------------------------------------
+📄 Fișier: ./rebuild_nomenclator_v5.py
+📏 Dimensiune: 47 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./set_construction_dna.py
+📏 Dimensiune: 38 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./inject_full_bom_detailed.py
+📏 Dimensiune: 57 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./create_nomenclator.py
+📏 Dimensiune: 35 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./axon_validate.py
+📏 Dimensiune: 16 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   db = firestore.Client()
+   
+-----------------------------------------------
+📄 Fișier: ./diagnostic_system.py
+📏 Dimensiune: 39 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./full_inventory_audit.py
+📏 Dimensiune: 37 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./nuclear_pvcase_sync.py
+📏 Dimensiune: 29 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./deep_repair_master_agent.py
+📏 Dimensiune: 49 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./absolute_precision_fix.py
+📏 Dimensiune: 54 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./query_all_materials.py
+📏 Dimensiune: 30 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./axon_universal_logic.py
+📏 Dimensiune: 41 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./flash_sync_pm.py
+📏 Dimensiune: 40 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./clean_ui_v32.py
+📏 Dimensiune: 80 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   import re
+   
+-----------------------------------------------
+📄 Fișier: ./smart_sync_v3.py
+📏 Dimensiune: 39 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./full_nomenclature_v31.py
+📏 Dimensiune: 50 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./set_pm_dna.py
+📏 Dimensiune: 37 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./view_gestiune.py
+📏 Dimensiune: 48 linii
+🔍 Rol Probabil: Interfață Utilizator (UI)
+📝 Primele rânduri:
+   import streamlit as st
+   import pandas as pd
+   import google.cloud.firestore as firestore
+-----------------------------------------------
+📄 Fișier: ./check_db_fields.py
+📏 Dimensiune: 12 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./final_health_check.py
+📏 Dimensiune: 24 linii
+🔍 Rol Probabil: Utilitar / Configurare
+📝 Primele rânduri:
+   import sys
+   
+   file_path = "/home/admin/AXON_CORE/axon_core_os.py"
+-----------------------------------------------
+📄 Fișier: ./axon_universal_validator.py
+📏 Dimensiune: 39 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   import sys
+-----------------------------------------------
+📄 Fișier: ./hard_reset_pm_consciousness.py
+📏 Dimensiune: 33 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./axon_validate_progres.py
+📏 Dimensiune: 39 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./self_healing_ui.py
+📏 Dimensiune: 63 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./set_procurement_dna.py
+📏 Dimensiune: 39 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./full_bom_import.py
+📏 Dimensiune: 62 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./reset_clean_slate.py
+📏 Dimensiune: 24 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./simulate_tracker_install.py
+📏 Dimensiune: 33 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./force_fix_trackers.py
+📏 Dimensiune: 46 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./standard_site_progress.py
+📏 Dimensiune: 29 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./execute_custody_transfer.py
+📏 Dimensiune: 28 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./dynamic_calc_fix.py
+📏 Dimensiune: 34 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./simulate_pv_reception.py
+📏 Dimensiune: 21 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./sync_pvcase_codes.py
+📏 Dimensiune: 42 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./hard_reset_pm_dna.py
+📏 Dimensiune: 33 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./ui_cleanup_final.py
+📏 Dimensiune: 43 linii
+🔍 Rol Probabil: Utilitar / Configurare
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./axon_bridge_ui.py
+📏 Dimensiune: 45 linii
+🔍 Rol Probabil: Interfață Utilizator (UI)
+📝 Primele rânduri:
+   import streamlit as st
+   import psycopg2
+   
+-----------------------------------------------
+📄 Fișier: ./upgrade_gestiune_v18.py
+📏 Dimensiune: 65 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./total_repair_v14.py
+📏 Dimensiune: 64 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./sync_pm_hierarchy.py
+📏 Dimensiune: 33 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./master_sync_v5.py
+📏 Dimensiune: 45 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   import unicodedata
+-----------------------------------------------
+📄 Fișier: ./restore_master_plan.py
+📏 Dimensiune: 32 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./rebuild_ui_v31.py
+📏 Dimensiune: 59 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   import re
+   
+-----------------------------------------------
+📄 Fișier: ./master_sync_v6.py
+📏 Dimensiune: 43 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   import unicodedata
+-----------------------------------------------
+📄 Fișier: ./audit_inventory.py
+📏 Dimensiune: 40 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./rebuild_gestiune_v33.py
+📏 Dimensiune: 71 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./force_data_sync.py
+📏 Dimensiune: 18 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./inventory_deduplicate_master.py
+📏 Dimensiune: 72 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./split_custody_transfer.py
+📏 Dimensiune: 35 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./deep_clean_inventory.py
+📏 Dimensiune: 40 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./report_pile_installation.py
+📏 Dimensiune: 0 linii
+🔍 Rol Probabil: Utilitar / Configurare
+📝 Primele rânduri:
+-----------------------------------------------
+📄 Fișier: ./master_rebuild.py
+📏 Dimensiune: 57 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
+📄 Fișier: ./financial_audit_v1.py
+📏 Dimensiune: 64 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./validate_progress.py
+📏 Dimensiune: 26 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./create_nomenclator_v3.py
+📏 Dimensiune: 51 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import google.cloud.firestore as firestore
+   import os
+   
+-----------------------------------------------
+📄 Fișier: ./laser_alignment_v20.py
+📏 Dimensiune: 57 linii
+🔍 Rol Probabil: Sincronizare Cloud (NoSQL)
+📝 Primele rânduri:
+   import os
+   
+   file_path = os.path.expanduser("~/AXON_CORE/axon_core_os.py")
+-----------------------------------------------
