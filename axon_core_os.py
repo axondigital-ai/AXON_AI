@@ -11,56 +11,7 @@ DATA_STORE_ID = "axon-knowledge-base_1771593704304"
 
 
 
-def display_construction_management():
-    st.subheader("📊 Gestiune Resurse - SISTEM INTEGRAT AXON")
-    import pandas as pd
-    
-    # 1. MAJOR ASSETS (Componente Principale)
-    with st.expander("🏗️ MAJOR ASSETS (Echipamente Principale)", expanded=True):
-        data_major = {
-            "Cod": ["MOD-PV", "INV-100", "TRK-SYS", "TRF-MVA"],
-            "Componentă": ["Module Fotovoltaice", "Invertoare Centrale", "Sisteme Tracker", "Transformatoare"],
-            "UM": ["BUC", "BUC", "SET", "BUC"],
-            "Stoc": [480, 4, 50, 2],
-            "Status": ["Sincronizat", "Verificare", "OK", "În Tranzit"]
-        }
-        st.dataframe(pd.DataFrame(data_major), use_container_width=True)
 
-    # 2. BOS & ELECTRICAL (Componente Electrice și Conectică)
-    with st.expander("⚡ BOS & ELECTRICAL (Cabluri și Conectori)", expanded=False):
-        data_elec = {
-            "Cod": ["CAB-HV", "CAB-DC", "STR-BOX", "CON-MC4"],
-            "Componentă": ["Cablu Medie Tensiune", "Cablu Solar DC", "String Boxes", "Conectori MC4"],
-            "UM": ["M", "M", "BUC", "SET"],
-            "Stoc": [2500, 15000, 24, 1000],
-            "Status": ["Stoc OK", "Necesar Suplimentar", "Sincronizat", "Stoc OK"]
-        }
-        st.dataframe(pd.DataFrame(data_elec), use_container_width=True)
-
-    # 3. MECHANICAL & STRUCTURE (Structuri și Montaj)
-    with st.expander("🛠️ MECHANICAL & STRUCTURE (Structură Metalică)", expanded=False):
-        data_mech = {
-            "Cod": ["PILE-01", "RAIL-A", "BOLT-M12", "BRK-V"],
-            "Componentă": ["Piloți Metalici", "Șine Susținere", "Set Șuruburi M12", "Bracheți Fixare"],
-            "UM": ["BUC", "ML", "CUTIE", "BUC"],
-            "Stoc": [600, 1200, 45, 800],
-            "Status": ["OK", "OK", "Stoc Scăzut", "Sincronizat"]
-        }
-        st.dataframe(pd.DataFrame(data_mech), use_container_width=True)
-
-    # 4. CUSTODIE (Subcontractori și Echipamente)
-    st.markdown("---")
-    st.subheader("📋 Echipamente în Custodie (Control Operativ)")
-    data_custodie = {
-        "Subcontractor": ["EL-Instal SRL", "CIVIL-Build", "EL-Instal SRL", "Solar-Tech"],
-        "Articol în Custodie": ["Scule electrice grup", "Excavator CAT 320", "Generator 50kVA", "Drone Monitorizare"],
-        "Cant.": [12, 1, 2, 3],
-        "Predat la": ["2026-01-10", "2026-02-05", "2026-02-15", "2026-02-20"],
-        "Status Retur": ["În termen", "În termen", "Depășit", "Activ"]
-    }
-    st.table(pd.DataFrame(data_custodie))
-    
-    st.success("✅ Toate componentele și gestiunea custodiei sunt actualizate la zi.")
 
 
 
@@ -138,7 +89,6 @@ def display_rogvaiv_gis():
 LOCATION = "global"
 
 @st.cache_resource
-@st.cache_resource
 def get_clients():
     import psycopg2
     try:
@@ -154,6 +104,21 @@ def get_clients():
         return cl
     except: return None
 clients = get_clients()
+def delete_file(blob_name):
+    try:
+        bucket = clients["storage"].bucket(BUCKET_NAME)
+        blob = bucket.blob(blob_name)
+        blob.delete()
+        return True
+    except Exception as e:
+        st.error(f"Eroare la ștergere: {e}")
+        return False
+def list_files_v2(aid):
+    prefix = "" if aid == "Project_Manager" else f"{aid}/"
+    # Forțăm refresh prin re-instanțiere bucket
+    bucket = clients["storage"].bucket(BUCKET_NAME)
+    return list(bucket.list_blobs(prefix=prefix))
+
 
 # --- HEALTH MONITOR (Ecran Start) ---
 def get_detailed_health():
@@ -218,7 +183,12 @@ def save_protocol(aid, txt):
 
 def list_files(aid):
     prefix = "" if aid == "Project_Manager" else f"{aid}/"
-    return list(clients["storage"].bucket(BUCKET_NAME).list_blobs(prefix=prefix))
+    # Forțăm refresh prin re-instanțiere bucket
+    bucket = clients["storage"].bucket(BUCKET_NAME)
+    return list(bucket.list_blobs(prefix=prefix))
+
+
+
 
 # --- UI ---
 st.set_page_config(page_title="AXON AI", layout="wide", page_icon="🧬")
@@ -273,26 +243,44 @@ else:
             active = any(b.name.startswith(f"{dept}/") for b in all_blobs)
             pulse_cols[i].caption(f"{'🟢' if active else '⚪'} {dept[:4]}")
         
-        st.markdown("##### 📂 Hub Management")
-        with st.expander("Arhivă & Protocol", expanded=False):
-            t1, t2 = st.tabs(["🔒 Protocol DNA", "📂 Arhivă Globală"])
+        st.markdown('##### 📂 Hub Management')
+        with st.expander('Arhivă & Protocol', expanded=False):
+            t1, t2 = st.tabs(['🔒 Protocol DNA', '📂 Arhivă Globală'])
             with t1:
                 dna_v = get_protocol(agent)
-                with st.expander("📝 Editare Protocol DNA", expanded=False):
-                    new_dna = st.text_area("DNA:", dna_v, height=150)
-                    if st.button("💾 Salvează"): save_protocol(agent, new_dna); st.rerun()
+                with st.expander('📝 Editare Protocol DNA', expanded=False):
+                    new_dna = st.text_area('DNA:', dna_v, height=150, key='pm_dna_input')
+                    if st.button('💾 Salvează Protocol', key='pm_save_btn'):
+                        save_protocol(agent, new_dna)
+                        st.rerun()
             with t2:
-                for f in all_blobs[:10]: st.caption(f"📄 {f.name}")
-        
-        st.divider()
-        if p := st.chat_input("Introdu directiva strategică..."):
-            with st.chat_message("assistant"):
-                k = search_rag(p); inv = get_global_inventory()
-                conf = GenerateContentConfig(tools=[Tool(google_search=GoogleSearch())], temperature=0.0)
-                for chunk in clients["ai"].models.generate_content_stream(model="gemini-2.5-flash", contents=[f"PM Master. Inventar: {inv}. Context: {k}. Protocol: {get_protocol(agent)}", p], config=conf):
-                    st.write(chunk.text)
-
-    # --- LOGICĂ PENTRU TOȚI CEILALȚI AGENȚI (2 Coloane + Hub Complet) ---
+                st.subheader('📂 Management Arhivă Globală')
+                if 'up_counter_PM' not in st.session_state: st.session_state['up_counter_PM'] = 0
+                u_key_pm = f'up_PM_{st.session_state["up_counter_PM"]}'
+                up_file_pm = st.file_uploader('Încarcă document (Lead Folder)', key=u_key_pm)
+                if up_file_pm:
+                    with st.spinner('Încărcare...'):
+                        b = clients['storage'].bucket(BUCKET_NAME).blob(f'Project_Manager/{up_file_pm.name}')
+                        b.upload_from_string(up_file_pm.getvalue(), content_type=up_file_pm.type if up_file_pm.type else 'application/pdf')
+                        st.session_state['up_counter_PM'] += 1
+                        st.success('✅ Fișier adăugat!')
+                        st.rerun()
+                st.divider()
+                # LISTARE GLOBALĂ UNICĂ (Lead Control)
+                all_sync_files = list(clients["storage"].bucket(BUCKET_NAME).list_blobs())
+                if all_sync_files:
+                    for idx, f_sync in enumerate(all_sync_files):
+                        c1, c2, c3 = st.columns([0.6, 0.2, 0.2])
+                        f_path = f_sync.name
+                        c1.markdown(f"📄 `{f_path}`")
+                        url_s = f"https://storage.cloud.google.com/{BUCKET_NAME}/{f_path}"
+                        c2.link_button("👁️", url_s, use_container_width=True)
+                        if c3.button("🗑️", key=f"del_sync_{idx}_{f_path.replace('/', '_')}", use_container_width=True):
+                            if delete_file(f_path):
+                                st.rerun()
+                else:
+                    st.info("Arhiva globală este goală.")
+                    st.info("Arhiva globală este goală.")
     else:
         col1, col2 = st.columns([1, 1.2])
         with col1:
@@ -307,26 +295,83 @@ else:
 
         with col2:
             st.subheader(f"📚 HUB: {agent}")
+            
+            # 1. Definim ce tab-uri are fiecare
             t_labels = ["🔒 Protocol", "📂 Arhivă"]
             if agent in ["Procurement", "Construction"]: t_labels.append("📊 Gestiune")
-            if agent == "Construction":
-                t_labels = ['📑 Protocol', '📂 Arhivă & Jurnale', '📊 Gestiune', '🗺️ GIS ROGVAIV']
-                tabs = st.tabs(t_labels)
-                with tabs[0]:
-                    st.subheader('📑 Protocol Operațional DNA')
-                    st.write('Procedura de lucru standard pentru execuție.')
-                with tabs[1]:
-                    st.subheader('📂 Documentație și Jurnale')
-                    st.file_uploader('📤 Încarcă document', key='const_up_final')
-                    c1, c2 = st.columns(2)
-                    with c1: st.button('📄 Jurnale Șantier', use_container_width=True)
-                    with c2: st.button('📋 Method Statements', use_container_width=True)
-                with tabs[2]:
+            if agent == "Construction": t_labels.append("🗺️ GIS ROGVAIV")
+            
+            tabs = st.tabs(t_labels)
+            
+            # --- TAB 0: PROTOCOL (Editabil pentru toți) ---
+            with tabs[0]:
+                dna_v = get_protocol(agent)
+                with st.expander(f"📝 Editare Protocol DNA - {agent}", expanded=True):
+                    new_dna = st.text_area("Procedura de lucru (Standard DNA):", dna_v, height=150, key=f"dna_{agent}")
+                    if st.button("💾 Salvează Protocol", key=f"save_{agent}"): 
+                        save_protocol(agent, new_dna)
+                        st.rerun()
+            
+            # --- TAB 1: ARHIVĂ (Activă pentru toți, salvare în Cloud Storage) ---
+                        # --- TAB 1: ARHIVĂ (Control Total v38) ---
+            with tabs[1]:
+                st.subheader('📂 Management Documentație')
+                
+                # Zona de Upload
+                # Logică Anti-Loop: Schimbăm cheia uploader-ului după succes
+                if f"up_counter_{agent}" not in st.session_state:
+                    st.session_state[f"up_counter_{agent}"] = 0
+                
+                u_key = f"up_{agent}_{st.session_state[f'up_counter_{agent}']}"
+                up_file = st.file_uploader('📤 Încarcă document nou', key=u_key)
+                
+                if up_file:
+                    with st.spinner("Se încarcă în Cloud..."):
+                        b_name = f"{agent}/{up_file.name}"
+                        blob = clients["storage"].bucket(BUCKET_NAME).blob(b_name)
+                        # Forțăm application/pdf dacă tipul nu e detectat
+                        c_type = up_file.type if up_file.type else "application/pdf"
+                        blob.upload_from_string(up_file.getvalue(), content_type=c_type)
+                        
+                        st.session_state[f"up_counter_{agent}"] += 1
+                        st.success(f"✅ Fișierul {up_file.name} a fost adăugat.")
+                        st.rerun()
+
+                st.divider()
+                
+                # Lista de fișiere cu acțiuni
+                agent_files = list_files(agent)
+                if agent_files:
+                    st.markdown(f"**Conținut Arhivă {agent}:**")
+                    for f in agent_files:
+                        # Creăm un rând cu coloane pentru fiecare fișier
+                        c_name, c_view, c_del = st.columns([0.6, 0.2, 0.2])
+                        f_name = f.name.split('/')[-1]
+                        if not f_name: continue # Skip directoare goale
+                        
+                        c_name.markdown(f"📄 `{f_name}`")
+                        
+                        # Buton de vizualizare/download (URL temporar 1 oră)
+                        url = f"https://storage.cloud.google.com/{BUCKET_NAME}/{f.name}"
+                        c_view.link_button("👁️ Vezi", url, use_container_width=True, help="Necesită logare în contul Google AXON")
+                        
+                        # Buton de ștergere
+                        if c_del.button("🗑️", key=f"del_{f.name}", use_container_width=True):
+                            if delete_file(f.name):
+                                st.toast(f"Șters: {f_name}")
+                                st.rerun()
+                else:
+                    st.info("Arhiva este goală pentru acest departament.")
+
+            # --- TAB 2 & 3: GESTIUNE & GIS (Doar unde e cazul) ---
+            if "📊 Gestiune" in t_labels:
+                with tabs[t_labels.index("📊 Gestiune")]:
                     try:
                         import pyarrow
                         display_construction_management()
                     except Exception as e:
                         st.error(f"❌ Eroare Gestiune: {e}")
-                        st.code("Încearcă: pip install pyarrow==15.0.0")
-                with tabs[3]:
+            
+            if "🗺️ GIS ROGVAIV" in t_labels:
+                with tabs[t_labels.index("🗺️ GIS ROGVAIV")]:
                     display_rogvaiv_gis()
