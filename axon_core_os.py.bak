@@ -1,6 +1,3 @@
-import os
-from dotenv import load_dotenv
-load_dotenv()
 import streamlit as st
 import pandas as pd
 from google import genai
@@ -55,13 +52,7 @@ def display_programmer_agent():
                     # Scanăm fișierele locale
                     local_files = os.listdir('.')
                     archive_files = os.listdir('archive_versions') if os.path.exists('archive_versions') else ['Fără arhivă locală']
-                    k_context = search_rag(p)
-                    # CITIRE DIRECTĂ LOCALĂ (Bypass Cloud RAG)
-                    try:
-                        mem_doc = clients['db'].collection('axon_memory').document('core_snapshot').get()
-                        if mem_doc.exists:
-                            k_context += "\n--- MEMORIE FIRESTORE ---\n" + mem_doc.to_dict().get('content', '')
-                    except: pass 
+                    k_context = search_rag(p) 
                     dna_state = get_protocol("Agentul_Programator")
                     
                     with open(__file__, 'r') as f_src:
@@ -140,7 +131,7 @@ def display_rogvaiv_gis():
             host="127.0.0.1", 
             database="axon_rogvaiv", 
             user="admin_axon", 
-            password=os.getenv('DB_PASS'), 
+            password="Axon2026X", 
             port="5432",
             connect_timeout=3
         )
@@ -193,7 +184,7 @@ def get_clients():
     try:
         d['pg_conn'] = psycopg2.connect(
             host='127.0.0.1', database='axon_rogvaiv', 
-            user='admin_axon', password=os.getenv('DB_PASS'), connect_timeout=2
+            user='admin_axon', password='Axon2026X', connect_timeout=2
         )
     except: pass
     return d
@@ -207,14 +198,26 @@ clients = get_clients()
 def search_rag(query):
     try:
         client = clients.get('search')
-        if not client: return 'Eroare: Client RAG offline.'
-        req_dict = {'serving_config': 'projects/axon-core-os/locations/global/collections/default_collection/dataStores/axon-knowledge-base_1771593704304/servingConfigs/default_serving_config', 'query': query, 'page_size': 3}
+        if not client: return "Eroare: Client RAG offline."
+        
+        # Hardcodăm exact calea pentru a evita erorile de variabile globale
+        serving_config = "projects/axon-core-os/locations/global/collections/default_collection/dataStores/axon-knowledge-base_1771593704304/servingConfigs/default_serving_config"
+        
+        # Pasăm argumentele ca dicționar (bypass la validarea strictă Protobuf)
+        req_dict = {
+            "serving_config": serving_config,
+            "query": query,
+            "page_size": 3
+        }
+        
         response = client.search(request=req_dict)
         res_list = [str(r.document.derived_struct_data) for r in response.results]
-        sep = chr(10) + '---' + chr(10)
-        return sep.join(res_list) if res_list else 'Fără rezultate în RAG.'
+        return "
+---
+".join(res_list) if res_list else "Fără rezultate în arhiva internă."
     except Exception as e:
-        return f'Eroare RAG: {str(e)}'
+        return f"Eroare RAG: {str(e)}"
+
 
 def handle_programmer_agent(user_input):
     if clients['ai']:
